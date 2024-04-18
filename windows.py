@@ -114,6 +114,17 @@ import numpy as np
 
 class MovingWindow:
     def __init__(self, root, x, y, radius, speed, feature):
+        """
+        Initializes a moving window.
+
+        Args:
+            root (tk.Tk): The root Tkinter window.
+            x (int): The initial x-coordinate of the window.
+            y (int): The initial y-coordinate of the window.
+            radius (int): The radius of the circular path the window follows.
+            speed (int): The speed at which the window moves along the circular path.
+            feature (str): The feature to display in the window ("left_eye", "right_eye", "mouth", "nose").
+        """
         self.root = root
         self.x = x
         self.y = y
@@ -129,6 +140,9 @@ class MovingWindow:
         self.predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
 
     def update_position(self):
+        """
+        Updates the position of the window along the circular path.
+        """
         self.angle += self.speed
         if self.angle >= 360:
             self.angle -= 360
@@ -138,6 +152,12 @@ class MovingWindow:
         self.window.geometry(f"320x240+{int(new_x)}+{int(new_y)}")  # Update window position
 
     def detect_faces(self, frame):
+        """
+        Detects facial features in a video frame and displays the specified feature in the window.
+
+        Args:
+            frame (numpy.ndarray): The input video frame.
+        """
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         faces = self.face_cascade.detectMultiScale(gray, 1.3, 5)
         for (x, y, w, h) in faces:
@@ -149,6 +169,7 @@ class MovingWindow:
             # Detect eyes and mouth
             left_eye = shape[36:42]
             right_eye = shape[42:48]
+            nose = shape[27:36]
             mouth = shape[48:68]
 
             if self.feature == "left_eye":
@@ -157,8 +178,17 @@ class MovingWindow:
                 self.display_feature(frame, right_eye)
             elif self.feature == "mouth":
                 self.display_feature(frame, mouth)
+            elif self.feature == "nose": 
+                self.display_feature(frame, nose)
 
     def display_feature(self, frame, feature_points):
+        """
+        Displays the specified feature in the window.
+
+        Args:
+            frame (numpy.ndarray): The input video frame.
+            feature_points (numpy.ndarray): The coordinates of the feature points.
+        """
         # Calculate bounding box for the feature points
         x, y, w, h = cv2.boundingRect(feature_points)
 
@@ -179,10 +209,6 @@ class MovingWindow:
         # Resize the feature image to fit the window while maintaining the aspect ratio
         scale = min(320 / feature_img.shape[1], 240 / feature_img.shape[0])
         feature_img = cv2.resize(feature_img, (int(feature_img.shape[1] * scale), int(feature_img.shape[0] * scale)))
-        # # Calculate the position to center the feature image in the window
-        # center_x = (320 - feature_img.shape[1]) // 2
-        # center_y = (240 - feature_img.shape[0]) // 2
-        # Convert the frame to PIL Image format
         image = Image.fromarray(cv2.cvtColor(feature_img, cv2.COLOR_BGR2RGB))
         # Convert the PIL Image to Tkinter-compatible format
         photo = ImageTk.PhotoImage(image=image)
@@ -191,12 +217,26 @@ class MovingWindow:
         self.canvas.image = photo  # To prevent garbage collection
 
 def update_windows(root, windows):
+    """
+    Updates the position of all windows.
+
+    Args:
+        root (tk.Tk): The root Tkinter window.
+        windows (list): A list of MovingWindow instances.
+    """
     for window in windows:
         window.update_position()
 
     root.after(50, lambda: update_windows(root, windows))
 
 def update_video(root, windows):
+    """
+    Updates the video frames in all windows.
+
+    Args:
+        root (tk.Tk): The root Tkinter window.
+        windows (list): A list of MovingWindow instances.
+    """
     for window in windows:
         ret, frame = window.video_stream.read()
         if ret:
@@ -208,7 +248,7 @@ def main():
     root.withdraw()  # Hide the main root window
 
     # Create moving windows with video streams for each feature
-    features = ["left_eye", "right_eye", "mouth"]
+    features = ["left_eye", "right_eye", "mouth", "nose"]
     windows = []
     for i, feature in enumerate(features):
         window = MovingWindow(root, 300, 300, 200, i + 1, feature)
