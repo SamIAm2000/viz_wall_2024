@@ -261,7 +261,7 @@ def main():
     root.withdraw()  # Hide the main root window
 
     # Create moving windows with video streams for each feature
-    features = ["left_eye", "mouth", "right_eye", "nose"]
+    features = ["right_eye", "mouth", "left_eye", "nose"]
     windows = []
     # Get the width and height of the screen
     screen_width = root.winfo_screenwidth()
@@ -274,16 +274,16 @@ def main():
         else:
             # Create a moving window for each feature at the center of the screen
             if feature == "left_eye":
-                window = MovingWindow(root, screen_width//2 - FEATURE_WINDOW_WIDTH//2, screen_height//2 -
+                window = MovingWindow(root, screen_width//2 - FEATURE_WINDOW_WIDTH//2+2000, screen_height//2 -
                                   FEATURE_WINDOW_HEIGHT//2, 350, 0, 90*i, feature, FEATURE_WINDOW_WIDTH, FEATURE_WINDOW_HEIGHT, face=False)
             elif feature == "mouth":
-                window = MovingWindow(root, screen_width//2 - FEATURE_WINDOW_WIDTH//2, screen_height//2 -
+                window = MovingWindow(root, screen_width//2 - FEATURE_WINDOW_WIDTH//2+2000, screen_height//2 -
                                   FEATURE_WINDOW_HEIGHT//2, 350, 0, 90*i, feature, FEATURE_WINDOW_WIDTH, FEATURE_WINDOW_HEIGHT, face=False)
             elif feature == "right_eye":
-                window = MovingWindow(root, screen_width//2 - FEATURE_WINDOW_WIDTH//2, screen_height//2 -
+                window = MovingWindow(root, screen_width//2 - FEATURE_WINDOW_WIDTH//2+2000, screen_height//2 -
                                   FEATURE_WINDOW_HEIGHT//2, 350, 0, 90*i, feature, FEATURE_WINDOW_WIDTH, FEATURE_WINDOW_HEIGHT, face=False)
             elif feature == "nose":
-                window = MovingWindow(root, screen_width//2 - FEATURE_WINDOW_WIDTH//2, screen_height//2 -
+                window = MovingWindow(root, screen_width//2 - FEATURE_WINDOW_WIDTH//2+2000, screen_height//2 -
                                   FEATURE_WINDOW_HEIGHT//2, 350, 0, 90*i, feature, FEATURE_WINDOW_WIDTH, FEATURE_WINDOW_HEIGHT, face=False)
                 
         window.video_stream = cv2.VideoCapture(0)

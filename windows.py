@@ -208,7 +208,7 @@ def main():
     root.withdraw()  # Hide the main root window
 
     # Create moving windows with video streams for each feature
-    features = ["left_eye", "mouth", "right_eye", "nose"]
+    features = ["left_eye", "mouth", "right_eye", "nose", "face_detection"]
     windows = []
     # Get the width and height of the screen
     screen_width = root.winfo_screenwidth()
@@ -216,13 +216,13 @@ def main():
     for i, feature in enumerate(features):
         if feature == "face_detection":
             # Create a moving window for face detection at the center of the screen
-            window = MovingWindow(root, screen_width//2 - FACE_WINDOW_WIDTH//2, screen_height//2 -
+            window = MovingWindow(root, screen_width//2 - FACE_WINDOW_WIDTH//2 +4000, screen_height//2 -
                                   FACE_WINDOW_HEIGHT//2, 0, 0, 0, feature, FACE_WINDOW_WIDTH, FACE_WINDOW_HEIGHT, face=True)
         else:
             # Create a moving window for each feature at the center of the screen
-            window = MovingWindow(root, screen_width//2 - FEATURE_WINDOW_WIDTH//2, screen_height//2 -
+            window = MovingWindow(root, screen_width//2 - FEATURE_WINDOW_WIDTH//2 + 4000, screen_height//2 -
                                   FEATURE_WINDOW_HEIGHT//2, 350, 3, 90*i, feature, FEATURE_WINDOW_WIDTH, FEATURE_WINDOW_HEIGHT, face=False)
-        window.video_stream = cv2.VideoCapture(0)
+        window.video_stream = cv2.VideoCapture(1)
         window.window.title(feature)
         windows.append(window)
 
