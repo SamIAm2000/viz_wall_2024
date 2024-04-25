@@ -1,3 +1,56 @@
+# import tkinter as tk
+# import cv2
+# from PIL import Image, ImageTk
+
+# def detect_faces(image, face_cascade):
+#     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+#     faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+#     return faces
+
+# def update_frames():
+#     ret, frame = cap.read()
+#     faces = detect_faces(frame, face_cascade)
+
+#     if len(faces) > 0:
+#         x, y, w, h = faces[0]  # Take the first detected face
+
+#         face_image = frame[y:y+h, x:x+w]
+#         face_image = cv2.cvtColor(face_image, cv2.COLOR_BGR2RGB)
+#         face_image = Image.fromarray(face_image)
+#         face_image = ImageTk.PhotoImage(image=face_image)
+
+#         for window in face_windows:
+#             window.configure(image=face_image)
+#             window.image = face_image
+
+#     root.after(10, update_frames)
+
+# root = tk.Tk()
+# root.title("Face Detection")
+
+# # OpenCV setup
+# cap = cv2.VideoCapture(0)
+# face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+
+# # Create four separate windows
+# face_windows = []
+# for _ in range(4):
+#     window = tk.Toplevel(root)
+#     window.title("Face Window")
+#     window.geometry("200x200")
+#     label = tk.Label(window, width=200, height=200)
+#     label.pack()
+#     face_windows.append(label)
+
+# # Start updating frames
+# update_frames()
+
+# root.mainloop()
+
+# # Release resources
+# cap.release()
+# cv2.destroyAllWindows()
+
 import tkinter as tk
 import cv2
 from PIL import Image, ImageTk
@@ -220,8 +273,19 @@ def main():
                                   FACE_WINDOW_HEIGHT//2, 0, 0, 0, feature, FACE_WINDOW_WIDTH, FACE_WINDOW_HEIGHT, face=True)
         else:
             # Create a moving window for each feature at the center of the screen
-            window = MovingWindow(root, screen_width//2 - FEATURE_WINDOW_WIDTH//2, screen_height//2 -
-                                  FEATURE_WINDOW_HEIGHT//2, 350, 3, 90*i, feature, FEATURE_WINDOW_WIDTH, FEATURE_WINDOW_HEIGHT, face=False)
+            if feature == "left_eye":
+                window = MovingWindow(root, screen_width//2 - FEATURE_WINDOW_WIDTH//2, screen_height//2 -
+                                  FEATURE_WINDOW_HEIGHT//2, 350, 0, 90*i, feature, FEATURE_WINDOW_WIDTH, FEATURE_WINDOW_HEIGHT, face=False)
+            elif feature == "mouth":
+                window = MovingWindow(root, screen_width//2 - FEATURE_WINDOW_WIDTH//2, screen_height//2 -
+                                  FEATURE_WINDOW_HEIGHT//2, 350, 0, 90*i, feature, FEATURE_WINDOW_WIDTH, FEATURE_WINDOW_HEIGHT, face=False)
+            elif feature == "right_eye":
+                window = MovingWindow(root, screen_width//2 - FEATURE_WINDOW_WIDTH//2, screen_height//2 -
+                                  FEATURE_WINDOW_HEIGHT//2, 350, 0, 90*i, feature, FEATURE_WINDOW_WIDTH, FEATURE_WINDOW_HEIGHT, face=False)
+            elif feature == "nose":
+                window = MovingWindow(root, screen_width//2 - FEATURE_WINDOW_WIDTH//2, screen_height//2 -
+                                  FEATURE_WINDOW_HEIGHT//2, 350, 0, 90*i, feature, FEATURE_WINDOW_WIDTH, FEATURE_WINDOW_HEIGHT, face=False)
+                
         window.video_stream = cv2.VideoCapture(0)
         window.window.title(feature)
         windows.append(window)
