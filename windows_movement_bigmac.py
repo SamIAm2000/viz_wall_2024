@@ -4,6 +4,9 @@ from PIL import Image, ImageTk
 import math
 import dlib
 import numpy as np
+from tkinter import simpledialog
+import os
+import sys
 
 FEATURE_WINDOW_WIDTH = 320
 FEATURE_WINDOW_HEIGHT = 200
@@ -185,9 +188,23 @@ def update_windows(root, windows):
     root.after(50, lambda: update_windows(root, windows))
 
 
+# def update_video(root, windows):
+#     """
+#     Updates the video frames in all windows.
+
+#     Args:
+#         root (tk.Tk): The root Tkinter window.
+#         windows (list): A list of MovingWindow instances.
+#     """
+#     for window in windows:
+#         ret, frame = window.video_stream.read()
+#         if ret:
+#             window.detect_faces(frame)
+#     root.after(10, lambda: update_video(root, windows))
+
 def update_video(root, windows):
     """
-    Updates the video frames in all windows.
+    Updates the video frames in all windows by capturing an image every second.
 
     Args:
         root (tk.Tk): The root Tkinter window.
@@ -197,13 +214,21 @@ def update_video(root, windows):
         ret, frame = window.video_stream.read()
         if ret:
             window.detect_faces(frame)
-    root.after(10, lambda: update_video(root, windows))
 
+    # Schedule the next frame capture after 1000 ms (1 second)
+    root.after(100, lambda: update_video(root, windows))
 
-def main():
+def select_camera():
+    root = tk.Tk()
+    root.withdraw()  # Hide the main root window
+    camera_index = simpledialog.askinteger("Select Camera", "Enter camera index (0 for first camera):", parent=root)
+    return camera_index
+
+def main(camera_index):
     """
     Initializes and runs the main application.
     """
+    #os.chdir(sys._MEIPASS)
     root = tk.Tk()
     root.withdraw()  # Hide the main root window
 
@@ -216,13 +241,13 @@ def main():
     for i, feature in enumerate(features):
         if feature == "face_detection":
             # Create a moving window for face detection at the center of the screen
-            window = MovingWindow(root, screen_width//2 - FACE_WINDOW_WIDTH//2 +4000, screen_height//2 -
+            window = MovingWindow(root, screen_width//2 - FACE_WINDOW_WIDTH//2, screen_height//2 -
                                   FACE_WINDOW_HEIGHT//2, 0, 0, 0, feature, FACE_WINDOW_WIDTH, FACE_WINDOW_HEIGHT, face=True)
         else:
             # Create a moving window for each feature at the center of the screen
-            window = MovingWindow(root, screen_width//2 - FEATURE_WINDOW_WIDTH//2 + 4000, screen_height//2 -
+            window = MovingWindow(root, screen_width//2 - FEATURE_WINDOW_WIDTH//2, screen_height//2 -
                                   FEATURE_WINDOW_HEIGHT//2, 350, 3, 90*i, feature, FEATURE_WINDOW_WIDTH, FEATURE_WINDOW_HEIGHT, face=False)
-        window.video_stream = cv2.VideoCapture(1)
+        window.video_stream = cv2.VideoCapture(camera_index)
         window.window.title(feature)
         windows.append(window)
 
@@ -230,6 +255,7 @@ def main():
     root.after(10, lambda: update_video(root, windows))
     root.mainloop()
 
-
 if __name__ == "__main__":
-    main()
+    
+    camera_index = select_camera()
+    main(camera_index)
