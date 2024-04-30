@@ -5,6 +5,8 @@ import math
 import dlib
 import numpy as np
 from tkinter import simpledialog
+import os
+import sys
 
 FEATURE_WINDOW_WIDTH = 320
 FEATURE_WINDOW_HEIGHT = 200
@@ -186,9 +188,23 @@ def update_windows(root, windows):
     root.after(50, lambda: update_windows(root, windows))
 
 
+# def update_video(root, windows):
+#     """
+#     Updates the video frames in all windows.
+
+#     Args:
+#         root (tk.Tk): The root Tkinter window.
+#         windows (list): A list of MovingWindow instances.
+#     """
+#     for window in windows:
+#         ret, frame = window.video_stream.read()
+#         if ret:
+#             window.detect_faces(frame)
+#     root.after(10, lambda: update_video(root, windows))
+
 def update_video(root, windows):
     """
-    Updates the video frames in all windows.
+    Updates the video frames in all windows by capturing an image every second.
 
     Args:
         root (tk.Tk): The root Tkinter window.
@@ -198,8 +214,9 @@ def update_video(root, windows):
         ret, frame = window.video_stream.read()
         if ret:
             window.detect_faces(frame)
-    root.after(10, lambda: update_video(root, windows))
 
+    # Schedule the next frame capture after 1000 ms (1 second)
+    root.after(100, lambda: update_video(root, windows))
 
 def select_camera():
     root = tk.Tk()
@@ -211,11 +228,12 @@ def main(camera_index):
     """
     Initializes and runs the main application.
     """
+    #os.chdir(sys._MEIPASS)
     root = tk.Tk()
     root.withdraw()  # Hide the main root window
 
     # Create moving windows with video streams for each feature
-    features = ["left_eye", "mouth", "right_eye", "nose"]
+    features = ["left_eye", "mouth", "right_eye", "nose", "face_detection"]
     windows = []
     # Get the width and height of the screen
     screen_width = root.winfo_screenwidth()
@@ -238,5 +256,6 @@ def main(camera_index):
     root.mainloop()
 
 if __name__ == "__main__":
+    
     camera_index = select_camera()
     main(camera_index)
